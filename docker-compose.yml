@@ -1,0 +1,40 @@
+version: '3.4'
+
+services:
+  app:
+    build:
+      context: .
+    container_name: app
+    depends_on:
+      - db
+    environment:
+      DB_HOST:
+      DB_NAME:
+      DB_PASSWORD:
+      DB_PORT:
+      DB_USER:
+      DB_URL:
+    volumes:
+      - '.:/srv/app'
+      - 'app_root_cache:/root/.cache'
+      - 'app_root_ivy:/root/.ivy'
+      - 'app_root_sbt:/root/.sbt'
+
+  db:
+    container_name: db
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    image: postgres:11.6-alpine
+    ports:
+      - '$POSTGRES_PORT:5432'
+    restart: always
+    volumes:
+      - postgres_data_volume:/var/lib/postgresql/data
+
+volumes:
+  app_root_cache:
+  app_root_ivy:
+  app_root_sbt:
+  postgres_data_volume:
